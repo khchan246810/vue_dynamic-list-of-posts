@@ -4,13 +4,13 @@ import CommentForm from './components/CommentForm.vue';
 import Loader from './components/Loader.vue';
 import PostForm from './components/PostForm.vue';
 import CommentsList from './components/CommentsList.vue';
-const API_URL = 'https://mate.academy/students-api';
+const API_URL = 'https://mate-academy.github.io/fe-students-api';
 const USER_ID = 1;
 
 const posts = ref([]);
 const loading = ref(false);
 const error = ref('');
-
+const submittingComment = ref(false);
 const selectedPost = ref(null);
 const comments = ref([]);
 const commentsLoading = ref(false);
@@ -185,6 +185,8 @@ function openCommentForm() {
 
 async function addComment(comment) {
   commentsError.value = '';
+  submittingComment.value = true;
+
 
   try {
     const response = await fetch(`${API_URL}/comments`, {
@@ -211,6 +213,8 @@ async function addComment(comment) {
     comment.clearBody();
   } catch (err) {
     commentsError.value = err.message;
+  } finally {
+    submittingComment.value = false;
   }
 }
 
@@ -421,7 +425,7 @@ onMounted(loadPosts);
             class="mt-4"
           >
             <CommentForm
-  :submitting="commentsLoading"
+  :submitting="submittingComment"
   @submit="addComment"
 />
           </div>
